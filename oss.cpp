@@ -16,9 +16,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-using std::cerr;
-using std::cout;
-using std::endl;
+using namespace std;
 
 struct PCB
 {
@@ -33,8 +31,8 @@ struct PCB
 static constexpr int kProcessTableSize = 20;
 static constexpr int kClockInts = 2;
 
-// Start with 10ms per loop, as suggested by the handout (adjust if needed).
-static constexpr int kTickNs = 10'000'000; // 10 ms simulated per loop
+// Aim closer to real-time pacing by reducing simulated advance per loop.
+static constexpr int kTickNs = 500; // 500 micro seconds simulated per loop
 static constexpr long long kHalfSecondNs = 500'000'000LL;
 
 static volatile sig_atomic_t g_shutdown_requested = 0;
@@ -129,24 +127,24 @@ static void print_process_table(const PCB table[], int sec, int nano)
        << " SysClockS: " << sec
        << " SysclockNano: " << nano << "\n";
   cout << "Process Table:\n";
-  cout << std::left
-       << std::setw(5) << "Entry" << " "
-       << std::setw(8) << "Occupied" << " "
-       << std::setw(5) << "PID" << " "
-       << std::setw(6) << "StartS" << " "
-       << std::setw(6) << "StartN" << " "
-       << std::setw(11) << "EndingTimeS" << " "
-       << std::setw(14) << "EndingTimeNano" << "\n";
+  cout << left
+       << setw(5) << "Entry" << " "
+       << setw(9) << "Occupied" << " "
+       << setw(9) << "PID" << " "
+       << setw(9) << "StartS" << " "
+       << setw(10) << "StartN" << " "
+       << setw(12) << "EndingTimeS" << " "
+       << setw(13) << "EndingTimeNano" << "\n";
   for (int i = 0; i < kProcessTableSize; ++i)
   {
-    cout << std::left
-         << std::setw(5) << i << " "
-         << std::setw(8) << table[i].occupied << " "
-         << std::setw(5) << static_cast<int>(table[i].pid) << " "
-         << std::setw(6) << table[i].startSeconds << " "
-         << std::setw(6) << table[i].startNano << " "
-         << std::setw(11) << table[i].endingTimeSeconds << " "
-         << std::setw(14) << table[i].endingTimeNano << "\n";
+    cout << left
+         << setw(5) << i << " "
+         << setw(9) << table[i].occupied << " "
+         << setw(9) << static_cast<int>(table[i].pid) << " "
+         << setw(9) << table[i].startSeconds << " "
+         << setw(10) << table[i].startNano << " "
+         << setw(12) << table[i].endingTimeSeconds << " "
+         << setw(13) << table[i].endingTimeNano << "\n";
   }
   cout.flush();
 }
@@ -171,8 +169,8 @@ static pid_t launch_worker(int interval_sec, int interval_ns)
   if (pid == 0)
   {
     char sec_arg[32], ns_arg[32];
-    std::snprintf(sec_arg, sizeof(sec_arg), "%d", interval_sec);
-    std::snprintf(ns_arg, sizeof(ns_arg), "%d", interval_ns);
+    snprintf(sec_arg, sizeof(sec_arg), "%d", interval_sec);
+    snprintf(ns_arg, sizeof(ns_arg), "%d", interval_ns);
 
     execlp("./worker", "worker", sec_arg, ns_arg, (char *)nullptr);
     perror("exec");
@@ -205,16 +203,16 @@ int main(int argc, char *argv[])
       print_usage(argv[0]);
       return 0;
     case 'n':
-      n_total = std::atoi(optarg);
+      n_total = atoi(optarg);
       break;
     case 's':
-      s_simul = std::atoi(optarg);
+      s_simul = atoi(optarg);
       break;
     case 't':
-      t_limit = std::atof(optarg);
+      t_limit = atof(optarg);
       break;
     case 'i':
-      i_interval = std::atof(optarg);
+      i_interval = atof(optarg);
       break;
     default:
       print_usage(argv[0]);
@@ -238,8 +236,8 @@ int main(int argc, char *argv[])
   cout << "Called with:\n";
   cout << "-n " << n_total << "\n";
   cout << "-s " << s_simul << "\n";
-  cout << "-t " << std::fixed << std::setprecision(1) << t_limit << "\n";
-  cout << "-i " << std::fixed << std::setprecision(1) << i_interval << "\n";
+  cout << "-t " << fixed << setprecision(1) << t_limit << "\n";
+  cout << "-i " << fixed << setprecision(1) << i_interval << "\n";
 
   // Shared memory setup (clock = 2 ints)
   // Use a stable ftok path that both oss and worker can use: current directory.

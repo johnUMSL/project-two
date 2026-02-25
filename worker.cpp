@@ -13,19 +13,18 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-using std::cout;
-using std::endl;
+using namespace std;
 
 int main(int argc, char *argv[])
 {
   if (argc < 3)
   {
-    std::fprintf(stderr, "Usage: %s <seconds> <nanoseconds>\n", argv[0]);
+    fprintf(stderr, "Usage: %s <seconds> <nanoseconds>\n", argv[0]);
     return 1;
   }
 
-  const int interval_sec = std::atoi(argv[1]);
-  const int interval_ns = std::atoi(argv[2]);
+  const int interval_sec = atoi(argv[1]);
+  const int interval_ns = atoi(argv[2]);
 
   // First output what it was called with + PID/PPID (per handout).
   cout << "Worker starting, PID:" << static_cast<int>(getpid())
