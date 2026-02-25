@@ -9,17 +9,20 @@ Example of how to run the project:
 ./oss -n 3 -s 2 -t 4 -i 0.6
 
 Notes:
+
 - Project implements oss/worker for the simulated clock assignment (project 2).
 - oss maintains a simulated system clock in shared memory (seconds, nanoseconds).
 - worker attaches to shared memory to read the clock and determines its termination time based on input.
-- oss will eventually manage a process table, launch workers with a minimum interval, and print periodic system state.
-- oss must terminate after all workers complete and must also handle a real-time 60s shutdown with cleanup.
+- oss manages a process table, launches workers with a minimum interval, and prints periodic system state.
+- oss uses -t as a simulated time limit for launching new workers.
+- oss terminates after all workers complete and handles a real-time 60s shutdown with cleanup.
 - No sleep/usleep is used in worker timing loops (simulated time only).
 
 Generative AI usage:
 Generative AI used: Roo Code & gpt-5.2-codex
 Prompts:
+
 - "Read cs4760Assignment2Spring2026.pdf and set up initial oss/worker and Makefile."
-- "Set up shared memory clock in oss and read it from worker." 
+- "Set up shared memory clock in oss and read it from worker."
 - "Update README to match assignment requirements for project 2."
-Summary: The AI was used to scaffold the initial files, wire up shared memory for the simulated clock, and draft README content. I reviewed and validated the changes and adjusted details to match the assignment requirements.
+  Summary: The AI was used to scaffold the initial files, wire up shared memory for the simulated clock, and draft README content. I reviewed and validated the changes and adjusted details to match the assignment requirements.
