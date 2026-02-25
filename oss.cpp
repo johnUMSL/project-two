@@ -113,14 +113,14 @@ static int find_slot_by_pid(PCB table[], pid_t pid)
   return -1;
 }
 
-static void clear_slot(PCB table[], int idx)
+static void clear_slot(PCB table[], int slot)
 {
-  table[idx].occupied = 0;
-  table[idx].pid = 0;
-  table[idx].startSeconds = 0;
-  table[idx].startNano = 0;
-  table[idx].endingTimeSeconds = 0;
-  table[idx].endingTimeNano = 0;
+  table[slot].occupied = 0;
+  table[slot].pid = 0;
+  table[slot].startSeconds = 0;
+  table[slot].startNano = 0;
+  table[slot].endingTimeSeconds = 0;
+  table[slot].endingTimeNano = 0;
 }
 
 static void print_process_table(const PCB table[], int sec, int nano)
@@ -129,10 +129,18 @@ static void print_process_table(const PCB table[], int sec, int nano)
        << " SysClockS: " << sec
        << " SysclockNano: " << nano << "\n";
   cout << "Process Table:\n";
-  cout << "Entry Occupied PID StartS StartN EndingTimeS EndingTimeNano\n";
+  cout << std::left
+       << std::setw(5) << "Entry" << " "
+       << std::setw(8) << "Occupied" << " "
+       << std::setw(5) << "PID" << " "
+       << std::setw(6) << "StartS" << " "
+       << std::setw(6) << "StartN" << " "
+       << std::setw(11) << "EndingTimeS" << " "
+       << std::setw(14) << "EndingTimeNano" << "\n";
   for (int i = 0; i < kProcessTableSize; ++i)
   {
-    cout << std::setw(5) << i << " "
+    cout << std::left
+         << std::setw(5) << i << " "
          << std::setw(8) << table[i].occupied << " "
          << std::setw(5) << static_cast<int>(table[i].pid) << " "
          << std::setw(6) << table[i].startSeconds << " "
@@ -323,14 +331,14 @@ int main(int argc, char *argv[])
       if (done <= 0)
         break;
 
-      int idx = find_slot_by_pid(processTable, done);
-      if (idx >= 0)
+      int slot = find_slot_by_pid(processTable, done);
+      if (slot >= 0)
       {
-        long long start_ns = clock_to_ns(processTable[idx].startSeconds, processTable[idx].startNano);
+        long long start_ns = clock_to_ns(processTable[slot].startSeconds, processTable[slot].startNano);
         long long end_ns = now_ns;
         if (end_ns > start_ns)
           total_run_ns += (end_ns - start_ns);
-        clear_slot(processTable, idx);
+        clear_slot(processTable, slot);
       }
       running--;
       finished++;
